@@ -36,8 +36,12 @@ public class Main extends AppCompatActivity {
     }
 
     public void buttonNavigateToScan(View view) {
-        Intent intent = new Intent(this, Scan.class);
-        startActivity(intent);
+        // if device is null, navigate to scan
+        if (mDevice == null) {
+            Intent intent = new Intent(this, Scan.class);
+            startActivity(intent);
+        }
+
     }
 
 

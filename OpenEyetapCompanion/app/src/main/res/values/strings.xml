@@ -1,5 +1,12 @@
 <resources>
-    <string name="app_name">OpenEyetapCompanion</string>
-    <string name="scan_paragraph">On your Open Eyetap, navigate to the Bluetooth settings and ensure the device is discoverable.</string>
+    <string name="app_name">Open EyeTap Companion</string>
+    <string name="scan_paragraph">Ensure your Open EyeTap\'s Bluetooth discovery is enabled.</string>
     <string name="scan_for_devices">Scan for Devices</string>
+    <string name="title_activity_menu">menu</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="device_default">No Device Connected</string>
+    <string name="id">Connect your Open EyeTap</string>
+    <string name="refresh_scan">Refresh</string>
 </resources>

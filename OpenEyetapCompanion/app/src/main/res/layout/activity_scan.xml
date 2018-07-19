@@ -6,6 +6,31 @@
     android:layout_height="match_parent"
     tools:context=".Scan">
 
+    <View
+        android:id="@+id/scan_description_view"
+        android:layout_width="0dp"
+        android:layout_height="85dp"
+        android:background="@color/colorAccent"
+        android:elevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <Button
+        android:id="@+id/button_scan"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:onClick="buttonScan"
+        android:text="@string/refresh_scan"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <ListView
         android:id="@+id/list_devices"
         android:layout_width="0dp"
@@ -13,39 +38,30 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/light_grey"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorLight"
         app:layout_constraintBottom_toTopOf="@+id/button_scan"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/button_scan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:onClick="buttonScan"
-        android:text="@string/scan_for_devices"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/scan_description_view" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/scan_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/scan_paragraph"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textAlignment="center"
+        android:textColor="@color/colorLight"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/scan_description_view"
+        app:layout_constraintEnd_toEndOf="@+id/scan_description_view"
+        app:layout_constraintStart_toStartOf="@+id/scan_description_view"
+        app:layout_constraintTop_toTopOf="@+id/scan_description_view" />
 
 
 </android.support.constraint.ConstraintLayout>

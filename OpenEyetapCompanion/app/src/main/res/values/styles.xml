@@ -7,5 +7,11 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:settingsActivity"></item>
+
+        <item name="android:windowBackground">@color/colorLight</item>
+    </style>
+
+    <style name="BannerButton" parent="Base.Widget.AppCompat.Button.Borderless">
+        <item name="android:background">@color/colorAccent</item>
     </style>
 </resources>

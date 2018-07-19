@@ -14,7 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Main">
+        <activity android:name=".Main"
+            android:launchMode="singleTop">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,12 +25,10 @@
         </activity>
         <activity
             android:name=".Scan"
-            android:parentActivityName=".Main">
-        </activity>
+            android:parentActivityName=".Main"></activity>
         <activity
             android:name=".Device"
-            android:parentActivityName=".Main">
-        </activity>
+            android:parentActivityName=".Main"></activity>
 
         <service
             android:name=".NotificationService"
@@ -38,6 +38,7 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+
     </application>
 
 </manifest>
