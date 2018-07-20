@@ -5,7 +5,10 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.util.Log;
 
 import java.io.IOException;
@@ -35,6 +38,7 @@ public class BluetoothService {
     public BluetoothService(Context context) {
         mContext = context;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
         start();
     }
 
@@ -240,7 +244,23 @@ public class BluetoothService {
         mConnectedThread.start();
     }
 
+    public void closeConnections() {
+        Log.d(TAG, "Closing connection...");
+        if(mConnectThread != null) {
+            Log.d(TAG, "Closing connect thread");
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }
+        if(mConnectedThread != null) {
+            Log.d(TAG, "Closing connected thread");
+            mConnectedThread.cancel();
+            mConnectedThread = null;
+        }
+    }
+
     public void write(byte[] bytes) {
         mConnectedThread.write(bytes);
     }
 }
+
+
