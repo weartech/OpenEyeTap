@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -34,6 +35,8 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
     public ArrayList<BluetoothDevice> mPairedDevices = new ArrayList<>();
     public DeviceListAdapter mPairedDeviceListAdapter;
 
+    TextView statusBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,8 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
         lvPairedDevices = (ListView) findViewById(R.id.list_paired);
         lvPairedDevices.setOnItemClickListener(Scan.this);
 
+        statusBar = (TextView) findViewById(R.id.status_bar);
+
         // Check if Bluetooth is supported
         if(mBluetoothAdapter == null) {
             Log.d(TAG, "toggleBT: Does not have BT capabilities");
@@ -64,9 +69,10 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
             startActivity(enableBTIntent);
 
             IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-            registerReceiver(mReceiver, BTIntent);
-
+            registerReceiver(mBluetoothStateReceiver, BTIntent);
         }
+
+        statusBar.setText("Bluetooth enabled.");
 
         // Bluetooth pairing
         IntentFilter BTPair = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
@@ -82,6 +88,8 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
 
     public void scanDevices() {
         // clearing list view and device list
+        statusBar.setText("Scanning for devices...");
+
         mNewDevices.clear();
         mPairedDevices.clear();
 
@@ -119,6 +127,7 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         if (adapterView.getAdapter().equals(mNewDeviceListAdapter)) {
+
             mBluetoothAdapter.cancelDiscovery();
 
             BluetoothDevice device = mNewDevices.get(i);
@@ -133,6 +142,10 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
             device.createBond();
         }
         else if (adapterView.getAdapter().equals(mPairedDeviceListAdapter)) {
+            statusBar.setText("Attempting to connect...");
+
+            mBluetoothAdapter.cancelDiscovery();
+
             BluetoothDevice device = mPairedDevices.get(i);
 
             // Switch to device activity
@@ -148,7 +161,7 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
         super.onDestroy();
 
         try{
-            unregisterReceiver(mReceiver);
+            unregisterReceiver(mBluetoothStateReceiver);
         }
         catch(Exception e) {
             Log.d(TAG, e.getMessage());
@@ -171,7 +184,7 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
 
 
     // Create a BroadcastReceiver for ACTION_FOUND, from developer.android.com
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mBluetoothStateReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
@@ -179,19 +192,24 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
             assert action != null;
             if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
                 final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, ERROR);
+                Log.d(TAG, "mBluetoothStateReceiver: " + state);
 
                 switch(state) {
                     case BluetoothAdapter.STATE_OFF:
                         Log.d(TAG, "onReceive: STATE_OFF");
+                        statusBar.setText("Bluetooth disabled.");
                         break;
                     case BluetoothAdapter.STATE_TURNING_OFF:
                         Log.d(TAG, "onReceive: STATE_TURNING_OFF");
+                        statusBar.setText("Disabling Bluetooth...");
                         break;
                     case BluetoothAdapter.STATE_ON:
                         Log.d(TAG, "onReceive: STATE_ON");
+                        statusBar.setText("Bluetooth enabled.");
                         break;
                     case BluetoothAdapter.STATE_TURNING_ON:
                         Log.d(TAG, "onReceive: STATE_TURNING_ON");
+                        statusBar.setText("Enabling Bluetooth...");
                         break;
                 }
             }
@@ -204,7 +222,6 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
             final String action = intent.getAction();
 
             Log.d(TAG, "onReceive: ACTION_FOUND");
-
 
             if(action.equals(BluetoothDevice.ACTION_FOUND)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
@@ -245,7 +262,8 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
                 lvNewDevices.setAdapter(mNewDeviceListAdapter);
 
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
-                    Log.d(TAG, "BroadcastReceiver: asdfBOND_BONDED");
+                    Log.d(TAG, "BroadcastReceiver: BOND_BONDED");
+                    statusBar.setText("Device paired.");
 
                     // refresh list views
                     mPairedDevices.add(mDevice);
@@ -258,9 +276,11 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
                 }
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
                     Log.d(TAG, "BroadcastReceiver: BOND_BONDING");
+                    statusBar.setText("Pairing device...");
                 }
                 if (mDevice.getBondState() == BluetoothDevice.BOND_NONE) {
                     Log.d(TAG, "BroadcastReceiver: BOND_NONE");
+                    statusBar.setText("No pairing.");
                 }
             }
         }

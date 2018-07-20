@@ -17,20 +17,10 @@
         android:layout_marginStart="8dp"
         android:onClick="buttonScan"
         android:text="@string/refresh_scan"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ListView
-        android:id="@+id/list_paired"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/colorLight"
-        app:layout_constraintBottom_toTopOf="@+id/header_scan"
+        app:layout_constraintBottom_toTopOf="@+id/status_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header_paired" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/header_paired"
@@ -45,8 +35,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ListView
+        android:id="@+id/list_paired"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorLight"
+        app:layout_constraintBottom_toTopOf="@+id/header_new"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header_paired" />
+
     <TextView
-        android:id="@+id/header_scan"
+        android:id="@+id/header_new"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -72,7 +73,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header_scan" />
+        app:layout_constraintTop_toBottomOf="@+id/header_new" />
+
+    <TextView
+        android:id="@+id/status_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>

@@ -115,15 +115,15 @@ public class BluetoothService {
 
             mBluetoothAdapter.cancelDiscovery();
 
+            // TODO return to scan activity if connection fails
             try {
                 mSocket.connect();
                 Log.d(TAG, "Connection established");
             } catch (IOException e) {
-                try {
-                    mSocket.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+
+                //mSocket.close();
+                cancel();
+
                 e.printStackTrace();
                 Log.d(TAG, "Connection failed");
                 return;
