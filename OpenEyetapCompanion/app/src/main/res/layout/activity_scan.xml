@@ -6,16 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".Scan">
 
-    <View
-        android:id="@+id/scan_description_view"
-        android:layout_width="0dp"
-        android:layout_height="85dp"
-        android:background="@color/colorAccent"
-        android:elevation="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 
     <Button
         android:id="@+id/button_scan"
@@ -32,36 +22,57 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ListView
-        android:id="@+id/list_devices"
+        android:id="@+id/list_paired"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/colorLight"
+        app:layout_constraintBottom_toTopOf="@+id/header_scan"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header_paired" />
+
+    <TextView
+        android:id="@+id/header_paired"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:text="Paired Devices"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/header_scan"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:background="@color/colorAccent"
+        android:text="New Devices"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/button_scan"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/header_paired"
+        app:layout_constraintVertical_bias="0.36" />
+
+    <ListView
+        android:id="@+id/list_new"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@color/colorLight"
         app:layout_constraintBottom_toTopOf="@+id/button_scan"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scan_description_view" />
-
-    <TextView
-        android:id="@+id/scan_description"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/scan_paragraph"
-        android:textAlignment="center"
-        android:textColor="@color/colorLight"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/scan_description_view"
-        app:layout_constraintEnd_toEndOf="@+id/scan_description_view"
-        app:layout_constraintStart_toStartOf="@+id/scan_description_view"
-        app:layout_constraintTop_toTopOf="@+id/scan_description_view" />
+        app:layout_constraintTop_toBottomOf="@+id/header_scan" />
 
 
 </android.support.constraint.ConstraintLayout>

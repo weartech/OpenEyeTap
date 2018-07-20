@@ -7,14 +7,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -31,9 +26,14 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
     BluetoothAdapter mBluetoothAdapter;
     Button buttonScan;
 
-    ListView lvDevices;
-    public ArrayList<BluetoothDevice> mDevices = new ArrayList<>();
-    public DeviceListAdapter mDeviceListAdapter;
+    ListView lvNewDevices;
+    public ArrayList<BluetoothDevice> mNewDevices = new ArrayList<>();
+    public DeviceListAdapter mNewDeviceListAdapter;
+
+    ListView lvPairedDevices;
+    public ArrayList<BluetoothDevice> mPairedDevices = new ArrayList<>();
+    public DeviceListAdapter mPairedDeviceListAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +45,11 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
 
         // UI elements
         buttonScan = (Button) findViewById(R.id.button_scan);
-        lvDevices = (ListView) findViewById(R.id.list_devices);
-        lvDevices.setOnItemClickListener(Scan.this);
+        lvNewDevices = (ListView) findViewById(R.id.list_new);
+        lvNewDevices.setOnItemClickListener(Scan.this);
+
+        lvPairedDevices = (ListView) findViewById(R.id.list_paired);
+        lvPairedDevices.setOnItemClickListener(Scan.this);
 
         // Check if Bluetooth is supported
         if(mBluetoothAdapter == null) {
@@ -62,6 +65,7 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
 
             IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
             registerReceiver(mReceiver, BTIntent);
+
         }
 
         // Bluetooth pairing
@@ -78,7 +82,12 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
 
     public void scanDevices() {
         // clearing list view and device list
-        mDevices.clear();
+        mNewDevices.clear();
+        mPairedDevices.clear();
+
+        lvPairedDevices.setAdapter(null);
+
+        lvNewDevices.setAdapter(null);
 
         Log.d(TAG, "buttonDiscover: Searching for devices");
 
@@ -109,20 +118,23 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        mBluetoothAdapter.cancelDiscovery();
+        if (adapterView.getAdapter().equals(mNewDeviceListAdapter)) {
+            mBluetoothAdapter.cancelDiscovery();
 
-        BluetoothDevice device = mDevices.get(i);
+            BluetoothDevice device = mNewDevices.get(i);
 
-        Log.d(TAG, "onItemClick: item clicked");
-        String deviceName = device.getName();
-        String deviceAddress = device.getAddress();
+            Log.d(TAG, "onItemClick: item clicked");
+            String deviceName = device.getName();
+            String deviceAddress = device.getAddress();
 
-        Log.d(TAG, "onItemClick: Name: " + deviceName);
-        Log.d(TAG, "onItemClick: Address: " + deviceAddress);
+            Log.d(TAG, "onItemClick: Name: " + deviceName);
+            Log.d(TAG, "onItemClick: Address: " + deviceAddress);
 
-        device.createBond();
+            device.createBond();
+        }
+        else if (adapterView.getAdapter().equals(mPairedDeviceListAdapter)) {
+            BluetoothDevice device = mPairedDevices.get(i);
 
-        if(device.getBondState() == BluetoothDevice.BOND_BONDED) {
             // Switch to device activity
             Intent intent = new Intent(this, Device.class);
             intent.putExtra("BT_DEVICE", device);
@@ -198,13 +210,22 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
                 // TODO change device filter to use something other than name
-                //if (!mDevices.contains(device) && device.getName().equals("bananapi")) {
-                if (!mDevices.contains(device)) {
-                    mDevices.add(device);
-                    Log.d(TAG, "onReceive: " + device.getName() + " : " + device.getAddress());
+                //if (!mNewDevices.contains(device) && device.getName().equals("bananapi")) {
+                if (!mNewDevices.contains(device) && !mPairedDevices.contains(device)) {
+                    // check if this device is already paired
+                    if(device.getBondState() == BluetoothDevice.BOND_BONDED) {
+                        mPairedDevices.add(device);
 
-                    mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mDevices);
-                    lvDevices.setAdapter(mDeviceListAdapter);
+                        mPairedDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mPairedDevices, "connect");
+                        lvPairedDevices.setAdapter(mPairedDeviceListAdapter);
+                    }
+                    else {
+                        mNewDevices.add(device);
+                        Log.d(TAG, "onReceive: " + device.getName() + " : " + device.getAddress());
+
+                        mNewDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mNewDevices, "pair");
+                        lvNewDevices.setAdapter(mNewDeviceListAdapter);
+                    }
                 }
             }
         }
@@ -220,11 +241,20 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
 
                 BluetoothDevice mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-                mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mDevices);
-                lvDevices.setAdapter(mDeviceListAdapter);
+                mNewDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mNewDevices, "pair");
+                lvNewDevices.setAdapter(mNewDeviceListAdapter);
 
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
-                    Log.d(TAG, "BroadcastReceiver: BOND_BONDED");
+                    Log.d(TAG, "BroadcastReceiver: asdfBOND_BONDED");
+
+                    // refresh list views
+                    mPairedDevices.add(mDevice);
+                    mPairedDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mPairedDevices, "connect");
+                    lvPairedDevices.setAdapter(mPairedDeviceListAdapter);
+
+                    mNewDevices.remove(mDevice);
+                    mNewDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mNewDevices, "pair");
+                    lvNewDevices.setAdapter(mNewDeviceListAdapter);
                 }
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
                     Log.d(TAG, "BroadcastReceiver: BOND_BONDING");
