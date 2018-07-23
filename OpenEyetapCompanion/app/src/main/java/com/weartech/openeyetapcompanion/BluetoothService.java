@@ -11,6 +11,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -203,8 +206,17 @@ public class BluetoothService {
         }
 
         public void write(byte[] bytes) {
+            // legacy JSON write
+            /*
             String text = new String(bytes, Charset.defaultCharset());
             Log.d(TAG, "Writing to OutputStream: " + text);
+            try {
+                mOutStream.write(bytes);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            */
+            Log.d(TAG, "Writing " + bytes.length + " bytes to OutputStream");
             try {
                 mOutStream.write(bytes);
             } catch (IOException e) {
@@ -259,7 +271,82 @@ public class BluetoothService {
     }
 
     public void write(byte[] bytes) {
+
         mConnectedThread.write(bytes);
+    }
+
+    // header: JSON object, 128 bytes max
+    // {
+    //  "type": String  LENGTH: 8 chars max
+    //  "bytes": int    SIZE: 8 bytes
+    //  if type == "file":
+    //  "name": String 8 chars
+    //  "ext": String   LENGTH: 8 chars max
+    // }
+
+    public void writeJSON(byte[] bytes, String type) {
+        Log.d(TAG, "Received request to send json");
+
+        // create header
+        JSONObject header = new JSONObject();
+        try {
+            header.put("type", "notif");
+            header.put("bytes", bytes.length);
+        } catch (JSONException e) {
+            Log.d(TAG, "Failed to package JSON object");
+        }
+        Log.d(TAG, "Packaged JSON header");
+
+        byte[] headerTextBytes = header.toString().getBytes(Charset.defaultCharset());
+
+        byte[] byteMessage = formMessage(headerTextBytes, bytes);
+
+        mConnectedThread.write(byteMessage);
+
+       // Log.d(TAG, "Header sent");
+       // Log.d(TAG, "JSON sent");
+
+        // write file bytes
+       // mConnectedThread.write(bytes);
+        //Log.d(TAG, "Data sent");
+    }
+
+    public void writeFile(byte[] bytes, String name, String ext) {
+        Log.d(TAG, "Received request to send file");
+
+        if(bytes != null) {
+            // check size of name and ext
+            name = name.substring(0, Math.min(8, name.length()));
+            ext = ext.substring(0, Math.min(8, ext.length()));
+            // create header
+            JSONObject header = new JSONObject();
+            try {
+                header.put("type", "file");
+                header.put("bytes", bytes.length);
+                header.put("name", name);
+                header.put("ext", ext);
+            } catch (JSONException e) {
+                Log.d(TAG, "Failed to package JSON object");
+            }
+            Log.d(TAG, "Packaged JSON header");
+
+            byte[] headerTextBytes = header.toString().getBytes(Charset.defaultCharset());
+
+            byte[] byteMessage = formMessage(headerTextBytes, bytes);
+
+            mConnectedThread.write(byteMessage);
+        }
+        else {
+            Log.d(TAG, "File is empty.");
+        }
+
+    }
+
+    private byte[] formMessage(byte[] headerText, byte[] message) {
+        byte[] fullMessage = new byte[128 + message.length];
+        System.arraycopy(headerText, 0, fullMessage, 0, headerText.length);
+        System.arraycopy(message, 0, fullMessage, 128, message.length);
+        return fullMessage;
     }
 }
 

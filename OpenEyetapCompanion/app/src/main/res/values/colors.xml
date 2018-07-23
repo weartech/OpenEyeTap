@@ -6,4 +6,5 @@
     <color name="colorLight">#D8DBE2</color>
     <color name="colorLighter">#f0f1f4</color>
     <color name="colorMedium">#a9bcd0</color>
+    <color name="colorAlert">#DC5754</color>
 </resources>

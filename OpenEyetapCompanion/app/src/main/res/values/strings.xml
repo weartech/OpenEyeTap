@@ -9,4 +9,5 @@
     <string name="device_default">No Device Connected</string>
     <string name="addr_connect">Connect your Open EyeTap</string>
     <string name="refresh_scan">Refresh</string>
+    <string name="disconnect">Disconnect</string>
 </resources>

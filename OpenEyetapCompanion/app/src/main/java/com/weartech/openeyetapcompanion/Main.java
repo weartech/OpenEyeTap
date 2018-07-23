@@ -1,15 +1,19 @@
 package com.weartech.openeyetapcompanion;
 
+import android.app.Notification;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,6 +36,11 @@ public class Main extends AppCompatActivity {
 
     ImageView ivScanDevice;
 
+    View vDisconnect;
+    Button bDisconnect;
+
+    NotificationService notificationService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,10 +52,16 @@ public class Main extends AppCompatActivity {
 
         ivScanDevice = findViewById(R.id.iv_scan_device);
 
+        vDisconnect = findViewById(R.id.disconnect_view);
+        bDisconnect = findViewById(R.id.disconnect_button);
+
         // for checking permissions
         /*Intent notificationIntent = new Intent(
                 "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");*/
         //startActivity(notificationIntent);
+
+        //Intent notifIntent = new Intent(this, NotificationService.class);
+        //this.startService(notifIntent);
 
         Bundle extras = getIntent().getExtras();
 
@@ -71,11 +86,13 @@ public class Main extends AppCompatActivity {
 
     }
 
-    public void buttonNavigateToScan(View view) {
-        // if device is null, navigate to scan
-        if (mDevice == null) {
+    public void buttonManageDevice(View view) {
+        if (mDevice == null) {          // if device is null, navigate to scan
             Intent intent = new Intent(this, Scan.class);
             startActivity(intent);
+        }
+        else {                          // otherwise, close connection
+            // TODO: prompt user for confirmation, and close
         }
 
     }
@@ -93,18 +110,27 @@ public class Main extends AppCompatActivity {
         startBluetoothConnection(mDevice, OET_UUID);
     }
 
-    private void sendMessage(String title, String pack, String text) {
+    private void sendMessage(String title, String pack, String text, String img) {
+        Log.d(TAG, "Packaging notification.");
+
         JSONObject notification = new JSONObject();
         try {
             notification.put("title", title);
             notification.put("package", pack);
             notification.put("text", text);
+            notification.put("img", img);
         } catch (JSONException e) {
             Log.d(TAG, "Failed to package JSON object");
         }
 
         if(mBluetoothService != null) {
-            mBluetoothService.write(notification.toString().getBytes(Charset.defaultCharset()));
+            mBluetoothService.writeJSON(notification.toString().getBytes(Charset.defaultCharset()), "notif");
+        }
+    }
+
+    private void sendFile(byte[] bytes, String name, String ext) {
+        if(mBluetoothService != null) {
+            mBluetoothService.writeFile(bytes, name, ext);
         }
     }
 
@@ -113,12 +139,21 @@ public class Main extends AppCompatActivity {
             tvDeviceName.setText(mDevice.getName());
             tvDeviceAddress.setText(mDevice.getAddress());
 
-            ivScanDevice.setVisibility(View.INVISIBLE);
+            ivScanDevice.setVisibility(View.GONE);
+
+            vDisconnect.setVisibility(View.VISIBLE);
+            bDisconnect.setVisibility(View.VISIBLE);
         }
         else {                  // no device connected
             tvDeviceName.setText(R.string.scan_for_devices);
             tvDeviceAddress.setText(R.string.addr_connect);
+
             ivScanDevice.setVisibility(View.VISIBLE);
+
+            vDisconnect.setVisibility(View.GONE);
+            bDisconnect.setVisibility(View.GONE);
+
+
         }
     }
 
@@ -131,7 +166,10 @@ public class Main extends AppCompatActivity {
             String notifPackage = intent.getStringExtra("package");
             String notifText = intent.getStringExtra("text");
 
-            sendMessage(notifTitle, notifPackage, notifText);
+            byte[] notifIcon = intent.getByteArrayExtra("icon");
+            sendFile(notifIcon, "icon", "png");
+
+            sendMessage(notifTitle, notifPackage, notifText, "icon.png");
         }
     };
 
@@ -141,7 +179,13 @@ public class Main extends AppCompatActivity {
 
             Log.d(TAG, "Device disconnected.");
             mBluetoothService.closeConnections();
-
         }
     };
+
+    public void buttonDisconnect(View view) {
+        Log.d(TAG, "Disconnecting device from server");
+        mBluetoothService.closeConnections();
+        mDevice = null;
+        updateUI();
+    }
 }

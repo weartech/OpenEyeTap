@@ -10,7 +10,7 @@
         style="@style/BannerButton"
         android:layout_width="0dp"
         android:layout_height="115dp"
-        android:onClick="buttonNavigateToScan"
+        android:onClick="buttonManageDevice"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,8 +23,7 @@
         android:text="@string/addr_connect"
         android:textColor="@color/colorLight"
         app:layout_constraintStart_toStartOf="@+id/preview_name"
-        app:layout_constraintTop_toBottomOf="@+id/preview_name"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/preview_name" />
 
     <ImageView
         android:id="@+id/preview_image"
@@ -62,12 +61,11 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/disconnect_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/preview_view"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/preview_view">
 
     </ScrollView>
 
@@ -75,13 +73,39 @@
         android:id="@+id/iv_scan_device"
         android:layout_width="40sp"
         android:layout_height="70sp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/preview_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/preview_view"
         app:layout_constraintVertical_bias="0.405"
         app:srcCompat="@drawable/forward_arrow" />
+
+    <View
+        android:id="@+id/disconnect_view"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/disconnect_button"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/colorAlert"
+        android:text="@string/disconnect"
+        android:onClick="buttonDisconnect"
+        app:layout_constraintBottom_toBottomOf="@+id/disconnect_view"
+        app:layout_constraintEnd_toEndOf="@+id/disconnect_view"
+        app:layout_constraintStart_toStartOf="@+id/disconnect_view"
+        app:layout_constraintTop_toTopOf="@+id/disconnect_view" />
 
 
 </android.support.constraint.ConstraintLayout>

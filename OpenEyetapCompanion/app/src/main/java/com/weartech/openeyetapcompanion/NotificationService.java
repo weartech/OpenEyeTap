@@ -4,6 +4,8 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
@@ -24,20 +26,19 @@ public class NotificationService extends NotificationListenerService {
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "Notification Service initialized");
+        Log.d(TAG, "Notification Service has been initialized");
         super.onCreate();
         context = getApplicationContext();
-
     }
+
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         Log.d(TAG, "MessageReceived");
         String pack = sbn.getPackageName();
         Bundle extras;
-        try{
+        try {
             extras = sbn.getNotification().extras;
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             Log.d(TAG, "Failed to fetch notification");
             return;
         }
@@ -45,9 +46,9 @@ public class NotificationService extends NotificationListenerService {
         String title = extras.getString("android.title");
         String text = Objects.requireNonNull(extras.getCharSequence("android.text")).toString();
         // int id1 = extras.getInt(Notification.EXTRA_SMALL_ICON);
-        // Bitmap id = sbn.getNotification().largeIcon;
+        Bitmap img = sbn.getNotification().largeIcon;
 
-        Log.d(TAG, "Package: " +  pack);
+        Log.d(TAG, "Package: " + pack);
         Log.d(TAG, "Title: " + title);
         Log.d(TAG, "Text: " + text);
 
@@ -57,20 +58,20 @@ public class NotificationService extends NotificationListenerService {
         msgIntent.putExtra("text", text);
 
         // TODO make it work with images
-        /*
-        if(id != null) {
+
+        if (img != null) {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            id.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            img.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] byteArray = stream.toByteArray();
-            msgrcv.putExtra("icon",byteArray);
-        }*/
+            msgIntent.putExtra("icon", byteArray);
+        }
         LocalBroadcastManager.getInstance(context).sendBroadcast(msgIntent);
     }
 
     @Override
 
     public void onNotificationRemoved(StatusBarNotification sbn) {
-        Log.i(TAG,"Notification Removed");
+        Log.i(TAG, "Notification Removed");
 
     }
 }
