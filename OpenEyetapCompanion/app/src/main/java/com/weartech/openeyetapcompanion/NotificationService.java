@@ -51,10 +51,10 @@ public class NotificationService extends NotificationListenerService {
         Log.d(TAG, "Title: " + title);
         Log.d(TAG, "Text: " + text);
 
-        Intent msgrcv = new Intent("Msg");
-        msgrcv.putExtra("package", pack);
-        msgrcv.putExtra("title", title);
-        msgrcv.putExtra("text", text);
+        Intent msgIntent = new Intent("Msg");
+        msgIntent.putExtra("package", pack);
+        msgIntent.putExtra("title", title);
+        msgIntent.putExtra("text", text);
 
         // TODO make it work with images
         /*
@@ -64,13 +64,13 @@ public class NotificationService extends NotificationListenerService {
             byte[] byteArray = stream.toByteArray();
             msgrcv.putExtra("icon",byteArray);
         }*/
-        LocalBroadcastManager.getInstance(context).sendBroadcast(msgrcv);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(msgIntent);
     }
 
     @Override
 
     public void onNotificationRemoved(StatusBarNotification sbn) {
-        Log.i("Msg","Notification Removed");
+        Log.i(TAG,"Notification Removed");
 
     }
 }

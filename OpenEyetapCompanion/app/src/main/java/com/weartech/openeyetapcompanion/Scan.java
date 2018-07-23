@@ -149,7 +149,7 @@ public class Scan extends AppCompatActivity implements AdapterView.OnItemClickLi
             BluetoothDevice device = mPairedDevices.get(i);
 
             // Switch to device activity
-            Intent intent = new Intent(this, Device.class);
+            Intent intent = new Intent(this, Main.class);
             intent.putExtra("BT_DEVICE", device);
             startActivity(intent);
         }
