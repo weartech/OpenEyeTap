@@ -36,6 +36,9 @@ print("Accepted connection from ",address)
 
 gui.clear_message()
 
+data = client_soc.recv(1024)
+
+
 
 data = client_sock.recv(HEADER_LENGTH)
 print("Header received: ", str(data))
@@ -126,4 +129,6 @@ client_sock.close()
 server_sock.close()
 gui.exit()
 
-
+def find_newline(data):
+    string_data = data.decode("UTF-8")
+    
