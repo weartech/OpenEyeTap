@@ -3,7 +3,8 @@
 import bluetooth
 import json
 import threading
-from interface import interface
+# from interface import interface
+from notificationservice import NotificationService
 import subprocess
 
 HEADER_LENGTH = 128
@@ -16,8 +17,10 @@ def decode_file(data, filename):
 cmd = 'sudo hciconfig hci0 piscan'
 subprocess.check_output(cmd, shell = True)
 
-gui = interface()
-gui.start()
+#gui = interface()
+#gui.start()
+
+notif_service = NotificationService()
 
 server_sock=bluetooth.BluetoothSocket(bluetooth.RFCOMM)
 port = 1
@@ -34,11 +37,7 @@ print("Waiting for connection...")
 client_sock,address = server_sock.accept()
 print("Accepted connection from ",address)
 
-gui.clear_message()
-
-data = client_soc.recv(1024)
-
-
+# gui.clear_message()
 
 data = client_sock.recv(HEADER_LENGTH)
 print("Header received: ", str(data))
@@ -55,9 +54,9 @@ while data:
     type = json_header["type"]
     bytes = json_header["bytes"]
     
-    current_bytes = 0;
+    current_bytes = 0
     data = b''
-    read_bytes = 0;
+    read_bytes = 0
     
     while read_bytes < bytes:
         print("Current file size: ", read_bytes)
@@ -75,27 +74,9 @@ while data:
         filename = name + "." + ext
         
         decode_file(data, filename)
+
     elif type == "notif":
-        print("Processing notification")
-        
-        json_string = data.decode("utf-8")
-        print(json_string)
-        notif_data = json.loads(json_string)
-        
-        print("Package: " + notif_data["package"])
-        print("Title: " + notif_data["title"])
-        print("Text: " + notif_data["text"])
-        print("Image: " + notif_data["img"])
-    
-        title = notif_data["title"]
-        package = notif_data["package"]
-        text = notif_data["text"]
-        image = "resources/notif.png"
-        if(notif_data["img"] != ""):
-            image = "temp/" + notif_data["img"]
-        print(image)
-    
-        gui.get_message(title, package, text, image)
+        notif_service.get_data(data)
         
     data = client_sock.recv(HEADER_LENGTH)
     print("Header received: ", str(data))
@@ -130,5 +111,6 @@ server_sock.close()
 gui.exit()
 
 def find_newline(data):
-    string_data = data.decode("UTF-8")
+    string_data = data.decode("utf-8")
+    return string_data.find("\r\n")
     
