@@ -36,7 +36,7 @@ print("Accepted connection from ",address)
 
 gui.clear_message()
 
-data = client_soc.recv(1024)
+# data = client_soc.recv(1024)
 
 
 
