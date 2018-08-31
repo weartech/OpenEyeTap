@@ -4,7 +4,11 @@ import bluetooth
 import json
 import threading
 # from interface import interface
+
+# import your own scripts here
+# TODO: automatic import from folder
 from notificationservice import NotificationService
+
 import subprocess
 
 HEADER_LENGTH = 128
@@ -20,7 +24,9 @@ subprocess.check_output(cmd, shell = True)
 #gui = interface()
 #gui.start()
 
+# Initialize your own services here
 notif_service = NotificationService()
+notif_service.start()
 
 server_sock=bluetooth.BluetoothSocket(bluetooth.RFCOMM)
 port = 1
@@ -74,7 +80,10 @@ while data:
         decode_file(data, filename)
 
     elif type == "notif":
+        print(data)
         notif_service.get_data(data)
+    # redirect data to your own scripts here    
+        
         
     data = client_sock.recv(HEADER_LENGTH)
     print("Header received: ", str(data))

@@ -11,29 +11,10 @@ class Overlay(Gtk.Window):
         
         # borderless
         # self.set_decorated(False)
-        Gtk.Window.set_composited()
         screen = self.get_screen()
-        rgba = screen.get_rgba_visual()
-        print(screen.is_composited())
-        if rgba != None and screen.is_composited():
-            print("HEY")
-            self.set_visual(rgba)
-                
-        self.set_app_paintable(True)
-        self.connect("draw", self.area_draw)
         
-        box = Gtk.Box()
-        self.add(box)
+        self.set_opacity(0.2)
         
-        
-    def on_button_clicked(self, widget):
-        print("HELLO")
-        
-    def area_draw(self, widget, cr):
-        cr.set_source_rgba(.8, .8, .8, 0.0)
-        cr.set_operator(cairo.OPERATOR_SOURCE)
-        cr.paint()
-        cr.set_operator(cairo.OPERATOR_OVER)
         
 
 win = Overlay()
